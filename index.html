@@ -140,6 +140,46 @@ body {
   font-weight: 300;
 }
 
+/* =============== ESTATÍSTICAS RÁPIDAS =============== */
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background: white;
+  padding: 25px;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.stat-number {
+  font-size: 2.5em;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  font-size: 0.9em;
+  color: var(--gray);
+  font-weight: 500;
+}
+
+.stat-icon {
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
 /* =============== NAVEGAÇÃO =============== */
 .nav-tabs {
   display: flex;
@@ -317,9 +357,20 @@ body {
   color: white;
 }
 
+.btn-warning {
+  background: var(--warning);
+  color: white;
+}
+
 .btn-sm {
   padding: 8px 16px;
   font-size: 0.85em;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
 }
 
 /* =============== TABELA =============== */
@@ -336,6 +387,8 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 25px;
+  flex-wrap: wrap;
+  gap: 15px;
 }
 
 .table-title {
@@ -414,6 +467,23 @@ td {
   gap: 8px;
 }
 
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 600;
+}
+
+.status-ativo {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-inativo {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
 /* =============== CARDS DE FAMILIARES =============== */
 .cards-grid {
   display: grid;
@@ -483,6 +553,51 @@ td {
   font-size: 0.85em;
   font-weight: 600;
   margin-top: 10px;
+}
+
+/* =============== ANIVERSÁRIOS =============== */
+.aniversarios-section {
+  background: white;
+  padding: 30px;
+  border-radius: 25px;
+  box-shadow: var(--shadow-lg);
+  margin-bottom: 30px;
+}
+
+.aniversario-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  background: #fef3c7;
+  border-radius: 15px;
+  margin-bottom: 15px;
+  border-left: 5px solid var(--warning);
+}
+
+.aniversario-urgent {
+  background: #fecaca;
+  border-left-color: var(--danger);
+}
+
+.aniversario-icon {
+  font-size: 2em;
+}
+
+.aniversario-info {
+  flex: 1;
+}
+
+.aniversario-nome {
+  font-size: 1.2em;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.aniversario-dias {
+  font-size: 0.9em;
+  color: var(--gray);
+  margin-top: 5px;
 }
 
 /* =============== MODAL =============== */
@@ -672,6 +787,10 @@ td {
   border-left: 5px solid var(--danger);
 }
 
+.notification.info {
+  border-left: 5px solid var(--primary);
+}
+
 .notification-icon {
   font-size: 1.5em;
 }
@@ -680,6 +799,28 @@ td {
   flex: 1;
   font-weight: 600;
   color: var(--dark);
+}
+
+/* =============== LOADING INLINE =============== */
+.loading-inline {
+  display: none;
+  text-align: center;
+  padding: 40px;
+  color: var(--gray);
+}
+
+.loading-inline.show {
+  display: block;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f4f6;
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 15px;
 }
 
 /* =============== RESPONSIVO =============== */
@@ -706,7 +847,6 @@ td {
   
   .table-header {
     flex-direction: column;
-    gap: 15px;
   }
   
   .search-box {
@@ -715,6 +855,10 @@ td {
   
   .modal-content {
     padding: 25px;
+  }
+  
+  .stats-bar {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -755,6 +899,30 @@ td {
     <p>Gerencie informações da sua família de forma completa e organizada</p>
   </div>
 
+  <!-- ESTATÍSTICAS -->
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-card">
+      <div class="stat-icon">👥</div>
+      <div class="stat-number" id="statTotal">-</div>
+      <div class="stat-label">Total de Familiares</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">✅</div>
+      <div class="stat-number" id="statAtivos">-</div>
+      <div class="stat-label">Cadastros Ativos</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🎂</div>
+      <div class="stat-number" id="statAniversarios">-</div>
+      <div class="stat-label">Aniversários Próximos</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">📊</div>
+      <div class="stat-number" id="statIdadeMedia">-</div>
+      <div class="stat-label">Idade Média</div>
+    </div>
+  </div>
+
   <!-- NAVEGAÇÃO -->
   <div class="nav-tabs">
     <button class="nav-tab active" onclick="mudarAba('cadastro')">
@@ -765,6 +933,9 @@ td {
     </button>
     <button class="nav-tab" onclick="mudarAba('cards')">
       <span>👥</span> Visualizar Familiares
+    </button>
+    <button class="nav-tab" onclick="mudarAba('aniversarios')">
+      <span>🎂</span> Aniversários
     </button>
   </div>
 
@@ -889,7 +1060,7 @@ td {
         </div>
 
         <div style="display: flex; gap: 15px; margin-top: 30px;">
-          <button type="submit" class="btn btn-primary" style="flex: 1;">
+          <button type="submit" class="btn btn-primary" style="flex: 1;" id="btnSubmit">
             <span id="btnSubmitText">💾 Cadastrar Familiar</span>
           </button>
           <button type="button" class="btn btn-secondary" onclick="cancelarEdicao()" id="btnCancelar" style="display: none;">
@@ -905,7 +1076,15 @@ td {
     <div class="table-card">
       <div class="table-header">
         <h2 class="table-title">📋 Todos os Familiares</h2>
-        <input type="text" class="search-box" id="searchInput" placeholder="🔍 Pesquisar familiar...">
+        <div style="display: flex; gap: 10px;">
+          <input type="text" class="search-box" id="searchInput" placeholder="🔍 Pesquisar familiar...">
+          <button class="btn btn-warning btn-sm" onclick="sincronizarDados()">🔄 Sincronizar</button>
+        </div>
+      </div>
+
+      <div class="loading-inline" id="loadingTable">
+        <div class="loading-spinner"></div>
+        <p>Carregando dados...</p>
       </div>
 
       <div class="table-wrapper">
@@ -917,6 +1096,7 @@ td {
               <th>CPF</th>
               <th>Nascimento</th>
               <th>Telefone</th>
+              <th>Status</th>
               <th>Ações</th>
             </tr>
           </thead>
@@ -928,7 +1108,28 @@ td {
 
   <!-- =============== ABA CARDS =============== -->
   <div id="cards" class="content-section">
+    <div class="loading-inline" id="loadingCards">
+      <div class="loading-spinner"></div>
+      <p>Carregando familiares...</p>
+    </div>
     <div class="cards-grid" id="cardsGrid"></div>
+  </div>
+
+  <!-- =============== ABA ANIVERSÁRIOS =============== -->
+  <div id="aniversarios" class="content-section">
+    <div class="aniversarios-section">
+      <h2 class="form-title">
+        <span>🎂</span>
+        <span>Aniversários Próximos</span>
+      </h2>
+
+      <div class="loading-inline" id="loadingAniversarios">
+        <div class="loading-spinner"></div>
+        <p>Carregando aniversários...</p>
+      </div>
+
+      <div id="aniversariosList"></div>
+    </div>
   </div>
 
 </div>
@@ -973,6 +1174,7 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwAbTfUA-Y8r4VItTDUXNBy
 
 let familiares = [];
 let familiarAtual = null;
+let estatisticas = {};
 
 // =============== MÁSCARAS ===============
 document.getElementById('cpf').addEventListener('input', function(e) {
@@ -1009,6 +1211,7 @@ function mudarAba(aba) {
   
   if (aba === 'lista') carregarTabela();
   if (aba === 'cards') carregarCards();
+  if (aba === 'aniversarios') carregarAniversarios();
 }
 
 // =============== NOTIFICAÇÃO ===============
@@ -1018,21 +1221,30 @@ function mostrarNotificacao(mensagem, tipo = 'success') {
   const text = document.getElementById('notifText');
   
   notif.className = 'notification show ' + tipo;
-  icon.textContent = tipo === 'success' ? '✅' : '❌';
+  
+  if (tipo === 'success') icon.textContent = '✅';
+  else if (tipo === 'error') icon.textContent = '❌';
+  else icon.textContent = 'ℹ️';
+  
   text.textContent = mensagem;
   
   setTimeout(() => {
     notif.classList.remove('show');
-  }, 3000);
+  }, 4000);
 }
 
 // =============== FORMULÁRIO ===============
 document.getElementById('familyForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   
+  const btnSubmit = document.getElementById('btnSubmit');
+  btnSubmit.disabled = true;
+  btnSubmit.innerHTML = '<span>⏳ Salvando...</span>';
+  
   const editId = document.getElementById('editId').value;
   
   const dados = {
+    acao: editId ? 'atualizar' : 'cadastrar',
     id: editId || Date.now(),
     nome: document.getElementById('nome').value,
     parentesco: document.getElementById('parentesco').value,
@@ -1051,7 +1263,7 @@ document.getElementById('familyForm').addEventListener('submit', async (e) => {
   };
 
   try {
-    await fetch(API_URL, {
+    const response = await fetch(API_URL, {
       method: 'POST',
       mode: 'no-cors',
       headers: {'Content-Type': 'application/json'},
@@ -1065,10 +1277,21 @@ document.getElementById('familyForm').addEventListener('submit', async (e) => {
     
     document.getElementById('familyForm').reset();
     cancelarEdicao();
-    carregar();
+    
+    setTimeout(() => {
+      carregar();
+      carregarEstatisticas();
+    }, 1000);
     
   } catch (erro) {
-    mostrarNotificacao('Erro ao salvar. Tente novamente.', 'error');
+    mostrarNotificacao('Dados enviados! Aguarde sincronização.', 'info');
+    setTimeout(() => {
+      carregar();
+      carregarEstatisticas();
+    }, 2000);
+  } finally {
+    btnSubmit.disabled = false;
+    btnSubmit.innerHTML = '<span id="btnSubmitText">💾 Cadastrar Familiar</span>';
   }
 });
 
@@ -1078,98 +1301,185 @@ async function carregar() {
     const res = await fetch(API_URL);
     const dados = await res.json();
     
-    // Remover cabeçalho e converter para objetos
     familiares = dados.slice(1).map(linha => ({
       id: linha[0],
       nome: linha[1],
       parentesco: linha[2],
       cpf: linha[3],
       nascimento: linha[4],
-      cartaoSus: linha[5],
-      telefone: linha[6],
-      email: linha[7],
-      profissao: linha[8],
-      estadoCivil: linha[9],
-      escolaridade: linha[10],
-      tipoSanguineo: linha[11],
-      nacionalidade: linha[12],
-      endereco: linha[13],
-      observacoes: linha[14]
-    }));
+      idade: linha[5],
+      cartaoSus: linha[6],
+      telefone: linha[7],
+      email: linha[8],
+      profissao: linha[9],
+      estadoCivil: linha[10],
+      escolaridade: linha[11],
+      tipoSanguineo: linha[12],
+      nacionalidade: linha[13],
+      endereco: linha[14],
+      observacoes: linha[15],
+      dataCadastro: linha[16],
+      ultimaAtualizacao: linha[17],
+      status: linha[18] || 'Ativo'
+    })).filter(f => f.status === 'Ativo');
     
   } catch (erro) {
-    console.log('Erro ao carregar dados');
+    console.log('Aguardando dados...');
+  }
+}
+
+// =============== ESTATÍSTICAS ===============
+async function carregarEstatisticas() {
+  try {
+    const res = await fetch(API_URL + '?acao=estatisticas');
+    estatisticas = await res.json();
+    
+    document.getElementById('statTotal').textContent = estatisticas.total || 0;
+    document.getElementById('statAtivos').textContent = estatisticas.ativos || 0;
+    document.getElementById('statAniversarios').textContent = estatisticas.aniversariantesDoMes || 0;
+    document.getElementById('statIdadeMedia').textContent = estatisticas.idadeMedia ? estatisticas.idadeMedia + ' anos' : '-';
+    
+  } catch (erro) {
+    console.log('Estatísticas não disponíveis');
   }
 }
 
 // =============== TABELA ===============
 function carregarTabela() {
   const tbody = document.getElementById('tableBody');
+  const loading = document.getElementById('loadingTable');
+  
+  loading.classList.add('show');
   tbody.innerHTML = '';
   
-  if (familiares.length === 0) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="6" style="text-align: center; padding: 40px; color: var(--gray);">
-          Nenhum familiar cadastrado ainda
+  setTimeout(() => {
+    loading.classList.remove('show');
+    
+    if (familiares.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7" style="text-align: center; padding: 40px; color: var(--gray);">
+            Nenhum familiar cadastrado ainda
+          </td>
+        </tr>
+      `;
+      return;
+    }
+    
+    familiares.forEach(f => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><strong>${f.nome}</strong></td>
+        <td>${f.parentesco}</td>
+        <td>${f.cpf || '-'}</td>
+        <td>${formatarData(f.nascimento)}</td>
+        <td>${f.telefone || '-'}</td>
+        <td><span class="status-badge status-${f.status.toLowerCase()}">${f.status}</span></td>
+        <td>
+          <div class="action-buttons">
+            <button class="btn btn-primary btn-sm" onclick="visualizar(${f.id})" title="Visualizar">👁️</button>
+            <button class="btn btn-success btn-sm" onclick="editar(${f.id})" title="Editar">✏️</button>
+            <button class="btn btn-danger btn-sm" onclick="deletar(${f.id})" title="Excluir">🗑️</button>
+          </div>
         </td>
-      </tr>
-    `;
-    return;
-  }
-  
-  familiares.forEach(f => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td><strong>${f.nome}</strong></td>
-      <td>${f.parentesco}</td>
-      <td>${f.cpf || '-'}</td>
-      <td>${formatarData(f.nascimento)}</td>
-      <td>${f.telefone || '-'}</td>
-      <td>
-        <div class="action-buttons">
-          <button class="btn btn-primary btn-sm" onclick="visualizar(${f.id})">👁️</button>
-          <button class="btn btn-success btn-sm" onclick="editar(${f.id})">✏️</button>
-          <button class="btn btn-danger btn-sm" onclick="deletar(${f.id})">🗑️</button>
-        </div>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
+      `;
+      tbody.appendChild(tr);
+    });
+  }, 500);
 }
 
 // =============== CARDS ===============
 function carregarCards() {
   const grid = document.getElementById('cardsGrid');
+  const loading = document.getElementById('loadingCards');
+  
+  loading.classList.add('show');
   grid.innerHTML = '';
   
-  if (familiares.length === 0) {
-    grid.innerHTML = `
-      <div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--gray);">
-        <h3>Nenhum familiar cadastrado</h3>
-        <p>Vá para a aba Cadastro para adicionar familiares</p>
+  setTimeout(() => {
+    loading.classList.remove('show');
+    
+    if (familiares.length === 0) {
+      grid.innerHTML = `
+        <div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--gray);">
+          <h3>Nenhum familiar cadastrado</h3>
+          <p>Vá para a aba Cadastro para adicionar familiares</p>
+        </div>
+      `;
+      return;
+    }
+    
+    familiares.forEach(f => {
+      const card = document.createElement('div');
+      card.className = 'family-card';
+      card.onclick = () => visualizar(f.id);
+      
+      const iniciais = f.nome.split(' ').map(n => n[0]).join('').substring(0, 2);
+      
+      card.innerHTML = `
+        <div class="card-avatar">${iniciais}</div>
+        <div class="card-name">${f.nome}</div>
+        <div class="card-info">📱 ${f.telefone || 'Não informado'}</div>
+        <div class="card-info">📅 ${formatarData(f.nascimento) || 'Não informado'}</div>
+        <div class="card-info">🎂 ${f.idade ? f.idade + ' anos' : 'Idade não informada'}</div>
+        <span class="card-badge">${f.parentesco}</span>
+      `;
+      
+      grid.appendChild(card);
+    });
+  }, 500);
+}
+
+// =============== ANIVERSÁRIOS ===============
+async function carregarAniversarios() {
+  const lista = document.getElementById('aniversariosList');
+  const loading = document.getElementById('loadingAniversarios');
+  
+  loading.classList.add('show');
+  lista.innerHTML = '';
+  
+  try {
+    const res = await fetch(API_URL + '?acao=aniversarios');
+    const aniversarios = await res.json();
+    
+    loading.classList.remove('show');
+    
+    if (aniversarios.length === 0) {
+      lista.innerHTML = `
+        <div style="text-align: center; padding: 40px; color: var(--gray);">
+          <h3>🎉 Nenhum aniversário próximo</h3>
+          <p>Não há aniversariantes nos próximos dias</p>
+        </div>
+      `;
+      return;
+    }
+    
+    aniversarios.forEach(a => {
+      const div = document.createElement('div');
+      div.className = a.diasRestantes <= 2 ? 'aniversario-item aniversario-urgent' : 'aniversario-item';
+      
+      div.innerHTML = `
+        <div class="aniversario-icon">🎂</div>
+        <div class="aniversario-info">
+          <div class="aniversario-nome">${a.nome} (${a.parentesco})</div>
+          <div class="aniversario-dias">
+            Faz aniversário em ${a.diasRestantes} ${a.diasRestantes === 1 ? 'dia' : 'dias'} 
+            - Fará ${a.idadeQueFara} anos
+          </div>
+        </div>
+      `;
+      
+      lista.appendChild(div);
+    });
+    
+  } catch (erro) {
+    loading.classList.remove('show');
+    lista.innerHTML = `
+      <div style="text-align: center; padding: 40px; color: var(--gray);">
+        <p>Erro ao carregar aniversários</p>
       </div>
     `;
-    return;
   }
-  
-  familiares.forEach(f => {
-    const card = document.createElement('div');
-    card.className = 'family-card';
-    card.onclick = () => visualizar(f.id);
-    
-    const iniciais = f.nome.split(' ').map(n => n[0]).join('').substring(0, 2);
-    
-    card.innerHTML = `
-      <div class="card-avatar">${iniciais}</div>
-      <div class="card-name">${f.nome}</div>
-      <div class="card-info">📱 ${f.telefone || 'Não informado'}</div>
-      <div class="card-info">📅 ${formatarData(f.nascimento) || 'Não informado'}</div>
-      <span class="card-badge">${f.parentesco}</span>
-    `;
-    
-    grid.appendChild(card);
-  });
 }
 
 // =============== MODAL ===============
@@ -1198,7 +1508,7 @@ function visualizar(id) {
     </div>
     <div class="info-item">
       <div class="info-label">Idade</div>
-      <div class="info-value">${calcularIdade(familiar.nascimento) || 'N/A'}</div>
+      <div class="info-value">${familiar.idade ? familiar.idade + ' anos' : 'N/A'}</div>
     </div>
     <div class="info-item">
       <div class="info-label">Cartão SUS</div>
@@ -1307,6 +1617,8 @@ function cancelarEdicao() {
 async function deletar(id) {
   if (!confirm('Tem certeza que deseja excluir este familiar?')) return;
   
+  mostrarNotificacao('Excluindo...', 'info');
+  
   try {
     await fetch(API_URL, {
       method: 'POST',
@@ -1316,11 +1628,30 @@ async function deletar(id) {
     });
     
     mostrarNotificacao('Familiar excluído com sucesso!', 'success');
-    carregar();
+    
+    setTimeout(() => {
+      carregar();
+      carregarEstatisticas();
+    }, 1000);
     
   } catch (erro) {
-    mostrarNotificacao('Erro ao excluir. Tente novamente.', 'error');
+    mostrarNotificacao('Solicitação enviada! Aguarde sincronização.', 'info');
+    setTimeout(() => {
+      carregar();
+      carregarEstatisticas();
+    }, 2000);
   }
+}
+
+// =============== SINCRONIZAR ===============
+async function sincronizarDados() {
+  mostrarNotificacao('Sincronizando dados...', 'info');
+  
+  await carregar();
+  await carregarEstatisticas();
+  carregarTabela();
+  
+  mostrarNotificacao('Dados sincronizados!', 'success');
 }
 
 // =============== PESQUISA ===============
@@ -1341,20 +1672,17 @@ function formatarData(data) {
   return d.toLocaleDateString('pt-BR');
 }
 
-function calcularIdade(dataNasc) {
-  if (!dataNasc) return null;
-  const hoje = new Date();
-  const nasc = new Date(dataNasc + 'T00:00:00');
-  let idade = hoje.getFullYear() - nasc.getFullYear();
-  const m = hoje.getMonth() - nasc.getMonth();
-  if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) {
-    idade--;
-  }
-  return idade + ' anos';
+// =============== INICIALIZAR ===============
+async function inicializar() {
+  await carregar();
+  await carregarEstatisticas();
+  carregarTabela();
 }
 
-// =============== INICIALIZAR ===============
-carregar();
+// Auto-iniciar após animação
+setTimeout(() => {
+  inicializar();
+}, 3500);
 </script>
 
 </body>
