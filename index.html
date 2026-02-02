@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sistema de Cadastro Familiar - Versão 2.0</title>
+<title>Sistema Familiar - Versão Final</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 * {
   margin: 0;
@@ -24,24 +25,127 @@
   --gray: #64748b;
   --shadow: 0 10px 40px rgba(0,0,0,0.1);
   --shadow-lg: 0 20px 60px rgba(0,0,0,0.15);
+  
+  /* Tema Claro (padrão) */
+  --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --card-bg: #ffffff;
+  --text-color: #1e293b;
+  --text-secondary: #64748b;
+  --input-bg: #f8fafc;
+  --input-border: #e2e8f0;
+}
+
+body.dark-mode {
+  --bg-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  --card-bg: #1e293b;
+  --text-color: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --input-bg: #0f172a;
+  --input-border: #334155;
 }
 
 body {
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--bg-gradient);
   min-height: 100vh;
   padding: 20px;
   overflow-x: hidden;
+  color: var(--text-color);
+  transition: all 0.3s ease;
 }
 
-/* =============== ANIMAÇÃO DE LOADING =============== */
+/* =============== TELA DE LOGIN =============== */
+.login-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-gradient);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10001;
+  transition: opacity 0.3s ease;
+}
+
+.login-screen.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.login-box {
+  background: var(--card-bg);
+  padding: 50px;
+  border-radius: 25px;
+  box-shadow: var(--shadow-lg);
+  max-width: 450px;
+  width: 90%;
+  text-align: center;
+}
+
+.login-logo {
+  font-size: 4em;
+  margin-bottom: 20px;
+}
+
+.login-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5em;
+  font-weight: 900;
+  color: var(--primary);
+  margin-bottom: 10px;
+}
+
+.login-subtitle {
+  color: var(--text-secondary);
+  margin-bottom: 40px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.login-input {
+  padding: 16px 20px;
+  border: 2px solid var(--input-border);
+  border-radius: 12px;
+  font-size: 1em;
+  font-family: 'Poppins', sans-serif;
+  background: var(--input-bg);
+  color: var(--text-color);
+  transition: all 0.3s;
+}
+
+.login-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+.login-error {
+  background: #fef2f2;
+  color: #ef4444;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 0.9em;
+  display: none;
+}
+
+.login-error.show {
+  display: block;
+}
+
+/* =============== LOADING =============== */
 .loading-screen {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--bg-gradient);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -99,7 +203,7 @@ body {
   to { transform: rotate(360deg); }
 }
 
-/* =============== CONTAINER PRINCIPAL =============== */
+/* =============== CONTAINER =============== */
 .container {
   max-width: 1400px;
   margin: 0 auto;
@@ -122,6 +226,7 @@ body {
 .header {
   text-align: center;
   margin-bottom: 40px;
+  position: relative;
 }
 
 .header h1 {
@@ -140,7 +245,38 @@ body {
   font-weight: 300;
 }
 
-/* =============== ESTATÍSTICAS RÁPIDAS =============== */
+/* =============== BOTÕES DE CONTROLE =============== */
+.control-buttons {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  gap: 10px;
+}
+
+.btn-control {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  background: var(--card-bg);
+  color: var(--text-color);
+  font-size: 1.3em;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-control:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* =============== ESTATÍSTICAS =============== */
 .stats-bar {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -149,7 +285,7 @@ body {
 }
 
 .stat-card {
-  background: white;
+  background: var(--card-bg);
   padding: 25px;
   border-radius: 20px;
   box-shadow: var(--shadow);
@@ -171,7 +307,7 @@ body {
 
 .stat-label {
   font-size: 0.9em;
-  color: var(--gray);
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
@@ -180,7 +316,7 @@ body {
   margin-bottom: 10px;
 }
 
-/* =============== NOVO: CARD DE ANIVERSÁRIO =============== */
+/* =============== CARD DE ANIVERSÁRIO =============== */
 .birthday-card {
   background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
   padding: 30px;
@@ -313,6 +449,44 @@ body {
   50% { transform: scale(1.02); }
 }
 
+/* =============== GRÁFICO E LEMBRETES =============== */
+.chart-container, .lembretes-container {
+  background: var(--card-bg);
+  padding: 30px;
+  border-radius: 25px;
+  box-shadow: var(--shadow-lg);
+  margin-bottom: 30px;
+}
+
+.chart-title {
+  font-size: 1.5em;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.lembrete-item {
+  background: var(--input-bg);
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-left: 4px solid var(--primary);
+}
+
+.lembrete-info h4 {
+  color: var(--text-color);
+  margin-bottom: 5px;
+}
+
+.lembrete-info p {
+  color: var(--text-secondary);
+  font-size: 0.9em;
+}
+
 /* =============== NAVEGAÇÃO =============== */
 .nav-tabs {
   display: flex;
@@ -375,7 +549,7 @@ body {
 
 /* =============== FORMULÁRIO =============== */
 .form-card {
-  background: white;
+  background: var(--card-bg);
   padding: 40px;
   border-radius: 25px;
   box-shadow: var(--shadow-lg);
@@ -385,7 +559,7 @@ body {
 .form-title {
   font-size: 2em;
   font-weight: 700;
-  color: var(--dark);
+  color: var(--text-color);
   margin-bottom: 30px;
   display: flex;
   align-items: center;
@@ -407,7 +581,7 @@ body {
 .form-group label {
   font-size: 0.9em;
   font-weight: 600;
-  color: var(--dark);
+  color: var(--text-color);
   margin-bottom: 8px;
   display: flex;
   align-items: center;
@@ -422,12 +596,13 @@ body {
 .form-group select,
 .form-group textarea {
   padding: 14px 18px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--input-border);
   border-radius: 12px;
   font-size: 1em;
   font-family: 'Poppins', sans-serif;
   transition: all 0.3s;
-  background: #f8fafc;
+  background: var(--input-bg);
+  color: var(--text-color);
 }
 
 .form-group input:focus,
@@ -435,7 +610,6 @@ body {
 .form-group textarea:focus {
   outline: none;
   border-color: var(--primary);
-  background: white;
   box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
 }
 
@@ -476,10 +650,6 @@ body {
   color: white;
 }
 
-.btn-secondary:hover {
-  background: #475569;
-}
-
 .btn-success {
   background: var(--success);
   color: white;
@@ -490,25 +660,14 @@ body {
   color: white;
 }
 
-.btn-warning {
-  background: var(--warning);
-  color: white;
-}
-
 .btn-sm {
   padding: 8px 16px;
   font-size: 0.85em;
 }
 
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none !important;
-}
-
-/* =============== NOVO: FILTROS =============== */
+/* =============== TABELA =============== */
 .filter-bar {
-  background: white;
+  background: var(--card-bg);
   padding: 20px;
   border-radius: 15px;
   box-shadow: var(--shadow);
@@ -526,7 +685,7 @@ body {
 .filter-group label {
   font-size: 0.9em;
   font-weight: 600;
-  color: var(--dark);
+  color: var(--text-color);
   margin-bottom: 5px;
   display: block;
 }
@@ -534,15 +693,15 @@ body {
 .filter-group select {
   width: 100%;
   padding: 10px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--input-border);
   border-radius: 8px;
   font-family: 'Poppins', sans-serif;
-  background: #f8fafc;
+  background: var(--input-bg);
+  color: var(--text-color);
 }
 
-/* =============== TABELA =============== */
 .table-card {
-  background: white;
+  background: var(--card-bg);
   padding: 30px;
   border-radius: 25px;
   box-shadow: var(--shadow-lg);
@@ -561,7 +720,7 @@ body {
 .table-title {
   font-size: 1.8em;
   font-weight: 700;
-  color: var(--dark);
+  color: var(--text-color);
 }
 
 .search-box {
@@ -572,17 +731,13 @@ body {
 .search-box input {
   width: 100%;
   padding: 12px 20px 12px 45px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--input-border);
   border-radius: 12px;
   font-size: 0.95em;
   font-family: 'Poppins', sans-serif;
   transition: all 0.3s;
-}
-
-.search-box input:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+  background: var(--input-bg);
+  color: var(--text-color);
 }
 
 .search-icon {
@@ -612,22 +767,31 @@ thead th {
   text-align: left;
   font-weight: 600;
   font-size: 0.9em;
-  white-space: nowrap;
 }
 
 tbody tr {
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--input-border);
   transition: all 0.3s;
 }
 
 tbody tr:hover {
-  background: #f8fafc;
+  background: var(--input-bg);
 }
 
 tbody td {
   padding: 15px;
   font-size: 0.9em;
-  color: var(--dark);
+  color: var(--text-color);
+}
+
+.badge-dias {
+  background: var(--danger);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75em;
+  font-weight: 600;
+  margin-left: 8px;
 }
 
 /* =============== CARDS =============== */
@@ -639,7 +803,7 @@ tbody td {
 }
 
 .family-card {
-  background: white;
+  background: var(--card-bg);
   padding: 25px;
   border-radius: 20px;
   box-shadow: var(--shadow);
@@ -681,14 +845,14 @@ tbody td {
 .card-name {
   font-size: 1.3em;
   font-weight: 700;
-  color: var(--dark);
+  color: var(--text-color);
   text-align: center;
   margin-bottom: 10px;
 }
 
 .card-info {
   font-size: 0.9em;
-  color: var(--gray);
+  color: var(--text-secondary);
   text-align: center;
   margin: 5px 0;
 }
@@ -706,7 +870,7 @@ tbody td {
 
 /* =============== ANIVERSÁRIOS =============== */
 .aniversario-item {
-  background: white;
+  background: var(--card-bg);
   padding: 20px;
   border-radius: 15px;
   margin-bottom: 15px;
@@ -724,7 +888,10 @@ tbody td {
 
 .aniversario-urgent {
   border-left-color: var(--danger);
-  background: #fef2f2;
+}
+
+.dark-mode .aniversario-urgent {
+  background: rgba(239, 68, 68, 0.1);
 }
 
 .aniversario-icon {
@@ -738,12 +905,12 @@ tbody td {
 .aniversario-nome {
   font-size: 1.2em;
   font-weight: 700;
-  color: var(--dark);
+  color: var(--text-color);
   margin-bottom: 5px;
 }
 
 .aniversario-dias {
-  color: var(--gray);
+  color: var(--text-secondary);
   font-size: 0.95em;
 }
 
@@ -767,7 +934,7 @@ tbody td {
 }
 
 .modal-content {
-  background: white;
+  background: var(--card-bg);
   padding: 40px;
   border-radius: 25px;
   max-width: 700px;
@@ -826,12 +993,12 @@ tbody td {
 .modal-nome {
   font-size: 2em;
   font-weight: 700;
-  color: var(--dark);
+  color: var(--text-color);
   margin-bottom: 5px;
 }
 
 .modal-parentesco {
-  color: var(--gray);
+  color: var(--text-secondary);
   font-size: 1.1em;
 }
 
@@ -844,21 +1011,21 @@ tbody td {
 
 .info-item {
   padding: 15px;
-  background: #f8fafc;
+  background: var(--input-bg);
   border-radius: 12px;
   border-left: 4px solid var(--primary);
 }
 
 .info-label {
   font-size: 0.85em;
-  color: var(--gray);
+  color: var(--text-secondary);
   font-weight: 600;
   margin-bottom: 5px;
 }
 
 .info-value {
   font-size: 1.05em;
-  color: var(--dark);
+  color: var(--text-color);
   font-weight: 500;
 }
 
@@ -873,7 +1040,7 @@ tbody td {
   position: fixed;
   top: 20px;
   right: 20px;
-  background: white;
+  background: var(--card-bg);
   padding: 20px 25px;
   border-radius: 15px;
   box-shadow: var(--shadow-lg);
@@ -910,24 +1077,19 @@ tbody td {
 
 .notification-title {
   font-weight: 700;
-  color: var(--dark);
+  color: var(--text-color);
   margin-bottom: 5px;
 }
 
 .notification-message {
   font-size: 0.9em;
-  color: var(--gray);
+  color: var(--text-secondary);
 }
 
 .notification-close {
   cursor: pointer;
   color: var(--gray);
   font-size: 1.5em;
-  transition: all 0.3s;
-}
-
-.notification-close:hover {
-  color: var(--danger);
 }
 
 .notification.success {
@@ -976,12 +1138,16 @@ tbody td {
   margin: 0 auto 20px;
 }
 
-.loading-content p {
-  font-size: 1.2em;
-  font-weight: 600;
+/* =============== CONFETE =============== */
+.confete {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  z-index: 9999;
+  pointer-events: none;
 }
 
-/* =============== RESPONSIVIDADE =============== */
+/* =============== RESPONSIVO =============== */
 @media (max-width: 768px) {
   .header h1 {
     font-size: 2.5em;
@@ -995,73 +1161,76 @@ tbody td {
     grid-template-columns: 1fr;
   }
   
-  .table-wrapper {
-    overflow-x: scroll;
-  }
-  
-  .search-box {
-    width: 100%;
-  }
-  
   .birthday-content {
     flex-direction: column;
     text-align: center;
-  }
-  
-  .birthday-name {
-    font-size: 1.5em;
-  }
-  
-  .countdown-number {
-    font-size: 3em;
   }
   
   .filter-bar {
     flex-direction: column;
   }
   
-  .modal-content {
-    padding: 25px;
-    width: 95%;
+  .control-buttons {
+    flex-direction: column;
   }
   
-  .info-grid {
-    grid-template-columns: 1fr;
+  .search-box {
+    width: 100%;
   }
 }
 
-/* =============== MODO DE IMPRESSÃO =============== */
 @media print {
   .nav-tabs,
   .birthday-card,
   .loading-screen,
   button,
   .filter-bar,
-  .btn {
+  .btn,
+  .control-buttons {
     display: none !important;
   }
   
   body {
     background: white !important;
   }
-  
-  .table-card {
-    box-shadow: none !important;
-  }
-  
-  table {
-    font-size: 10pt;
-  }
-  
-  .header h1 {
-    color: #000 !important;
-    font-size: 24pt;
-  }
 }
 </style>
 </head>
 
 <body>
+
+<!-- TELA DE LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">🔐</div>
+    <h1 class="login-title">Acesso Restrito</h1>
+    <p class="login-subtitle">Digite a senha para acessar o sistema</p>
+    
+    <form class="login-form" onsubmit="fazerLogin(event)">
+      <input 
+        type="password" 
+        id="senhaInput" 
+        class="login-input" 
+        placeholder="Digite a senha"
+        autocomplete="off"
+        required
+      >
+      
+      <div class="login-error" id="loginError">
+        ❌ Senha incorreta! Tente novamente.
+      </div>
+      
+      <button type="submit" class="btn btn-primary" style="width: 100%;">
+        🔓 Entrar no Sistema
+      </button>
+    </form>
+    
+    <p style="margin-top: 30px; font-size: 0.85em; color: var(--text-secondary);">
+      💡 Senha padrão: <strong>familia2024</strong><br>
+      <small>(Altere a senha na linha 1787 do código)</small>
+    </p>
+  </div>
+</div>
 
 <!-- LOADING INICIAL -->
 <div class="loading-screen">
@@ -1088,8 +1257,18 @@ tbody td {
   <div class="notification-close" onclick="fecharNotificacao()">×</div>
 </div>
 
+<!-- BOTÕES DE CONTROLE -->
+<div class="control-buttons">
+  <button class="btn-control" onclick="toggleDarkMode()" title="Modo Escuro/Claro">
+    <span id="iconMode">🌙</span>
+  </button>
+  <button class="btn-control" onclick="sair()" title="Sair do Sistema">
+    🚪
+  </button>
+</div>
+
 <!-- CONTAINER PRINCIPAL -->
-<div class="container">
+<div class="container" id="mainContainer" style="display: none;">
   
   <!-- HEADER -->
   <div class="header">
@@ -1146,6 +1325,25 @@ tbody td {
         <div class="countdown-label" id="bdayLabel">DIAS</div>
       </div>
     </div>
+  </div>
+  
+  <!-- GRÁFICO DE ANIVERSÁRIOS POR MÊS -->
+  <div class="chart-container">
+    <h3 class="chart-title">📊 Aniversários por Mês</h3>
+    <canvas id="chartAniversarios"></canvas>
+  </div>
+  
+  <!-- LEMBRETES -->
+  <div class="lembretes-container">
+    <h3 class="chart-title">🔔 Meus Lembretes</h3>
+    
+    <div style="margin-bottom: 20px;">
+      <button class="btn btn-primary" onclick="abrirModalLembrete()">
+        ➕ Adicionar Lembrete
+      </button>
+    </div>
+    
+    <div id="lembretesLista"></div>
   </div>
   
   <!-- NAVEGAÇÃO -->
@@ -1300,7 +1498,6 @@ tbody td {
   <!-- ABA LISTA -->
   <div id="lista" class="content-section">
     
-    <!-- FILTROS -->
     <div class="filter-bar">
       <div class="filter-group">
         <label>Filtrar por Parentesco</label>
@@ -1310,10 +1507,6 @@ tbody td {
           <option value="Mãe">Mãe</option>
           <option value="Filho(a)">Filho(a)</option>
           <option value="Irmão(ã)">Irmão(ã)</option>
-          <option value="Avô(ó)">Avô(ó)</option>
-          <option value="Tio(a)">Tio(a)</option>
-          <option value="Primo(a)">Primo(a)</option>
-          <option value="Cônjuge">Cônjuge</option>
         </select>
       </div>
       
@@ -1323,22 +1516,18 @@ tbody td {
           <option value="">Todos</option>
           <option value="Solteiro(a)">Solteiro(a)</option>
           <option value="Casado(a)">Casado(a)</option>
-          <option value="Divorciado(a)">Divorciado(a)</option>
-          <option value="Viúvo(a)">Viúvo(a)</option>
         </select>
       </div>
       
       <div class="filter-group">
         <button class="btn btn-secondary" onclick="limparFiltros()" style="margin-top: 26px; width: 100%;">
-          🔄 Limpar Filtros
+          🔄 Limpar
         </button>
       </div>
     </div>
     
-    <!-- AÇÕES -->
     <div style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
-      <button class="btn btn-primary" onclick="exportarExcel()">📊 Exportar Excel</button>
-      <button class="btn btn-secondary" onclick="imprimirLista()">🖨️ Imprimir</button>
+      <button class="btn btn-primary" onclick="exportarExcel()">📊 Exportar</button>
       <button class="btn btn-success" onclick="sincronizarDados()">🔄 Sincronizar</button>
     </div>
     
@@ -1351,34 +1540,21 @@ tbody td {
         </div>
       </div>
       
-      <div class="loading-overlay" id="loadingTable">
-        <div class="loading-content">
-          <div class="loading-spinner"></div>
-          <p>Carregando...</p>
-        </div>
-      </div>
-      
       <div class="table-wrapper">
         <table>
           <thead>
             <tr>
-              <th>ID</th>
               <th>Nome</th>
               <th>Parentesco</th>
-              <th>CPF</th>
               <th>Nascimento</th>
               <th>Idade</th>
               <th>Telefone</th>
-              <th>Email</th>
-              <th>Profissão</th>
-              <th>Estado Civil</th>
-              <th>Escolaridade</th>
               <th>Ações</th>
             </tr>
           </thead>
           <tbody id="tableBody">
             <tr>
-              <td colspan="12" style="text-align: center; padding: 40px; color: var(--gray);">
+              <td colspan="6" style="text-align: center; padding: 40px;">
                 Nenhum familiar cadastrado
               </td>
             </tr>
@@ -1394,14 +1570,6 @@ tbody td {
       <div class="table-header">
         <div class="table-title">🎴 Familiares em Cards</div>
       </div>
-      
-      <div class="loading-overlay" id="loadingCards">
-        <div class="loading-content">
-          <div class="loading-spinner"></div>
-          <p>Carregando...</p>
-        </div>
-      </div>
-      
       <div class="cards-grid" id="cardsGrid"></div>
     </div>
   </div>
@@ -1412,14 +1580,6 @@ tbody td {
       <div class="table-header">
         <div class="table-title">🎂 Aniversários Próximos</div>
       </div>
-      
-      <div class="loading-overlay" id="loadingAniversarios">
-        <div class="loading-content">
-          <div class="loading-spinner"></div>
-          <p>Carregando...</p>
-        </div>
-      </div>
-      
       <div id="aniversariosList"></div>
     </div>
   </div>
@@ -1446,15 +1606,102 @@ tbody td {
   </div>
 </div>
 
+<!-- MODAL LEMBRETE -->
+<div class="modal" id="modalLembrete" onclick="fecharModalLembrete()">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <span class="modal-close" onclick="fecharModalLembrete()">×</span>
+    
+    <h2 style="color: var(--text-color); margin-bottom: 20px;">🔔 Novo Lembrete</h2>
+    
+    <form onsubmit="salvarLembrete(event)">
+      <div class="form-group" style="margin-bottom: 15px;">
+        <label>Familiar</label>
+        <select id="lembreteFamiliar" required style="width: 100%; padding: 12px; border: 2px solid var(--input-border); border-radius: 8px; background: var(--input-bg); color: var(--text-color);">
+          <option value="">Selecione</option>
+        </select>
+      </div>
+      
+      <div class="form-group" style="margin-bottom: 15px;">
+        <label>Mensagem</label>
+        <textarea id="lembreteMensagem" required style="width: 100%; padding: 12px; border: 2px solid var(--input-border); border-radius: 8px; background: var(--input-bg); color: var(--text-color); min-height: 80px;"></textarea>
+      </div>
+      
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label>Data</label>
+        <input type="date" id="lembreteData" required style="width: 100%; padding: 12px; border: 2px solid var(--input-border); border-radius: 8px; background: var(--input-bg); color: var(--text-color);">
+      </div>
+      
+      <button type="submit" class="btn btn-primary" style="width: 100%;">
+        💾 Salvar Lembrete
+      </button>
+    </form>
+  </div>
+</div>
+
 <script>
 // =============== CONFIGURAÇÃO ===============
-const API_URL = 'https://script.google.com/macros/s/AKfycbypyP5jq7IV9CJ5AGS9uCKXo4mL-TMnmZ9V6kvOgO0I64nv3UBxTX6KGQ305-GFL9glYA/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbwMHC_vZjc-vm8qKXWEEvyLr6Qvpfq4YaoRWxdWSnWz1_jQyAhT7s_S9flm35CiKwUjxw/exec';
+
+// 🔐 ALTERE A SENHA AQUI:
+const SENHA_SISTEMA = '********';
 
 let familiares = [];
 let familiarAtual = null;
+let lembretes = JSON.parse(localStorage.getItem('lembretes') || '[]');
+let chartInstance = null;
+
+// =============== AUTENTICAÇÃO ===============
+function verificarAutenticacao() {
+  const autenticado = sessionStorage.getItem('autenticado');
+  if (autenticado === 'true') {
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('mainContainer').style.display = 'block';
+    return true;
+  }
+  return false;
+}
+
+function fazerLogin(e) {
+  e.preventDefault();
+  const senha = document.getElementById('senhaInput').value;
+  const erro = document.getElementById('loginError');
+  
+  if (senha === SENHA_SISTEMA) {
+    sessionStorage.setItem('autenticado', 'true');
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('mainContainer').style.display = 'block';
+    mostrarNotificacao('Login realizado com sucesso!', 'success');
+  } else {
+    erro.classList.add('show');
+    document.getElementById('senhaInput').value = '';
+    setTimeout(() => erro.classList.remove('show'), 3000);
+  }
+}
+
+function sair() {
+  if (confirm('Deseja realmente sair do sistema?')) {
+    sessionStorage.removeItem('autenticado');
+    location.reload();
+  }
+}
+
+// =============== MODO ESCURO ===============
+function toggleDarkMode() {
+  document.body.classList.toggle('dark-mode');
+  const isDark = document.body.classList.contains('dark-mode');
+  localStorage.setItem('darkMode', isDark);
+  document.getElementById('iconMode').textContent = isDark ? '☀️' : '🌙';
+}
+
+window.addEventListener('load', () => {
+  if (localStorage.getItem('darkMode') === 'true') {
+    document.body.classList.add('dark-mode');
+    document.getElementById('iconMode').textContent = '☀️';
+  }
+});
 
 // =============== MÁSCARAS ===============
-document.getElementById('cpf').addEventListener('input', function(e) {
+document.getElementById('cpf')?.addEventListener('input', function(e) {
   let valor = e.target.value.replace(/\D/g, '');
   valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
   valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
@@ -1462,7 +1709,7 @@ document.getElementById('cpf').addEventListener('input', function(e) {
   e.target.value = valor;
 });
 
-document.getElementById('telefone').addEventListener('input', function(e) {
+document.getElementById('telefone')?.addEventListener('input', function(e) {
   let valor = e.target.value.replace(/\D/g, '');
   if (valor.length <= 10) {
     valor = valor.replace(/(\d{2})(\d)/, '($1) $2');
@@ -1474,24 +1721,14 @@ document.getElementById('telefone').addEventListener('input', function(e) {
   e.target.value = valor;
 });
 
-document.getElementById('cartaoSus').addEventListener('input', function(e) {
-  let valor = e.target.value.replace(/\D/g, '');
-  valor = valor.replace(/(\d{3})(\d)/, '$1 $2');
-  valor = valor.replace(/(\d{4})(\d)/, '$1 $2');
-  valor = valor.replace(/(\d{4})(\d)/, '$1 $2');
-  e.target.value = valor;
-});
-
 // =============== NAVEGAÇÃO ===============
 function mudarAba(aba) {
   document.querySelectorAll('.content-section').forEach(section => {
     section.classList.remove('active');
   });
-  
   document.querySelectorAll('.nav-tab').forEach(tab => {
     tab.classList.remove('active');
   });
-  
   document.getElementById(aba).classList.add('active');
   event.target.classList.add('active');
   
@@ -1521,14 +1758,37 @@ function mostrarNotificacao(mensagem, tipo = 'success', duracao = 5000) {
   }
   
   message.textContent = mensagem;
-  
-  setTimeout(() => {
-    notif.classList.remove('show');
-  }, duracao);
+  setTimeout(() => notif.classList.remove('show'), duracao);
 }
 
 function fecharNotificacao() {
   document.getElementById('notification').classList.remove('show');
+}
+
+// =============== CONFETE ===============
+function criarConfete() {
+  const cores = ['#FFD700', '#FF69B4', '#00CED1', '#FF6347', '#7FFF00', '#FF1493'];
+  
+  for (let i = 0; i < 100; i++) {
+    const confete = document.createElement('div');
+    confete.className = 'confete';
+    confete.style.left = Math.random() * 100 + '%';
+    confete.style.top = '-10px';
+    confete.style.backgroundColor = cores[Math.floor(Math.random() * cores.length)];
+    confete.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+    
+    document.body.appendChild(confete);
+    
+    const animacao = confete.animate([
+      { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+      { transform: `translateY(${window.innerHeight + 50}px) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+    ], {
+      duration: Math.random() * 3000 + 2000,
+      easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+    });
+    
+    animacao.onfinish = () => confete.remove();
+  }
 }
 
 // =============== CARREGAR DADOS ===============
@@ -1538,7 +1798,6 @@ async function carregar() {
     const dados = await res.json();
     
     if (dados && dados.length > 1) {
-      const cabecalho = dados[0];
       familiares = [];
       
       for (let i = 1; i < dados.length; i++) {
@@ -1565,6 +1824,8 @@ async function carregar() {
           status: linha[18]
         });
       }
+      
+      atualizarSelectLembretes();
     }
   } catch (erro) {
     console.error('Erro ao carregar:', erro);
@@ -1624,6 +1885,197 @@ async function carregarAniversarioMaisProximo() {
   }
 }
 
+// =============== GRÁFICO DE ANIVERSÁRIOS POR MÊS ===============
+function criarGraficoAniversarios() {
+  const meses = Array(12).fill(0);
+  
+  familiares.forEach(f => {
+    if (f.nascimento) {
+      const mes = new Date(f.nascimento + 'T00:00:00').getMonth();
+      meses[mes]++;
+    }
+  });
+  
+  const ctx = document.getElementById('chartAniversarios');
+  if (!ctx) return;
+  
+  if (chartInstance) {
+    chartInstance.destroy();
+  }
+  
+  chartInstance = new Chart(ctx.getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+      datasets: [{
+        label: 'Aniversários',
+        data: meses,
+        backgroundColor: '#6366f1',
+        borderRadius: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { stepSize: 1 }
+        }
+      }
+    }
+  });
+}
+
+// =============== CONTADOR DE DIAS ATÉ PRÓXIMO ANIVERSÁRIO ===============
+function diasAteAniversario(dataNasc) {
+  if (!dataNasc) return null;
+  
+  const hoje = new Date();
+  const nasc = new Date(dataNasc + 'T00:00:00');
+  
+  const proxAniv = new Date(hoje.getFullYear(), nasc.getMonth(), nasc.getDate());
+  
+  if (proxAniv < hoje) {
+    proxAniv.setFullYear(hoje.getFullYear() + 1);
+  }
+  
+  return Math.ceil((proxAniv - hoje) / (1000 * 60 * 60 * 24));
+}
+
+// =============== LEMBRETES ===============
+function atualizarSelectLembretes() {
+  const select = document.getElementById('lembreteFamiliar');
+  if (!select) return;
+  
+  select.innerHTML = '<option value="">Selecione</option>';
+  
+  familiares.forEach(f => {
+    const option = document.createElement('option');
+    option.value = f.id;
+    option.textContent = f.nome;
+    select.appendChild(option);
+  });
+}
+
+function abrirModalLembrete() {
+  document.getElementById('modalLembrete').classList.add('active');
+}
+
+function fecharModalLembrete() {
+  document.getElementById('modalLembrete').classList.remove('active');
+  document.getElementById('lembreteFamiliar').value = '';
+  document.getElementById('lembreteMensagem').value = '';
+  document.getElementById('lembreteData').value = '';
+}
+
+function salvarLembrete(e) {
+  e.preventDefault();
+  
+  const idFamiliar = document.getElementById('lembreteFamiliar').value;
+  const mensagem = document.getElementById('lembreteMensagem').value;
+  const data = document.getElementById('lembreteData').value;
+  
+  const familiar = familiares.find(f => f.id == idFamiliar);
+  
+  lembretes.push({
+    id: Date.now(),
+    idFamiliar: parseInt(idFamiliar),
+    nomeFamiliar: familiar.nome,
+    mensagem: mensagem,
+    data: data,
+    ativo: true
+  });
+  
+  localStorage.setItem('lembretes', JSON.stringify(lembretes));
+  
+  mostrarNotificacao('Lembrete criado com sucesso!', 'success');
+  fecharModalLembrete();
+  carregarLembretes();
+}
+
+function carregarLembretes() {
+  const lista = document.getElementById('lembretesLista');
+  if (!lista) return;
+  
+  lista.innerHTML = '';
+  
+  if (lembretes.length === 0) {
+    lista.innerHTML = `
+      <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+        <p>Nenhum lembrete cadastrado</p>
+      </div>
+    `;
+    return;
+  }
+  
+  lembretes.sort((a, b) => new Date(a.data) - new Date(b.data));
+  
+  lembretes.forEach(l => {
+    if (!l.ativo) return;
+    
+    const div = document.createElement('div');
+    div.className = 'lembrete-item';
+    
+    const diasRestantes = Math.ceil((new Date(l.data) - new Date()) / (1000 * 60 * 60 * 24));
+    
+    div.innerHTML = `
+      <div class="lembrete-info">
+        <h4>${l.nomeFamiliar} - ${l.mensagem}</h4>
+        <p>📅 ${formatarData(l.data)} ${diasRestantes >= 0 ? `(em ${diasRestantes} ${diasRestantes === 1 ? 'dia' : 'dias'})` : '(vencido)'}</p>
+      </div>
+      <div class="lembrete-actions">
+        <button class="btn btn-danger btn-sm" onclick="deletarLembrete(${l.id})">🗑️</button>
+      </div>
+    `;
+    
+    lista.appendChild(div);
+  });
+}
+
+function deletarLembrete(id) {
+  if (!confirm('Deseja excluir este lembrete?')) return;
+  
+  lembretes = lembretes.filter(l => l.id !== id);
+  localStorage.setItem('lembretes', JSON.stringify(lembretes));
+  carregarLembretes();
+  mostrarNotificacao('Lembrete excluído!', 'success');
+}
+
+function verificarLembretes() {
+  const hoje = new Date().toISOString().split('T')[0];
+  
+  lembretes.forEach(l => {
+    if (l.ativo && l.data === hoje) {
+      mostrarNotificacao(`🔔 Lembrete: ${l.mensagem} (${l.nomeFamiliar})`, 'info', 10000);
+      l.ativo = false;
+    }
+  });
+  
+  localStorage.setItem('lembretes', JSON.stringify(lembretes));
+}
+
+// =============== VERIFICAR ANIVERSÁRIOS DO DIA ===============
+function verificarAniversariosHoje() {
+  const hoje = new Date();
+  
+  const aniversariantesHoje = familiares.filter(f => {
+    if (!f.nascimento) return false;
+    const nasc = new Date(f.nascimento + 'T00:00:00');
+    return nasc.getDate() === hoje.getDate() && nasc.getMonth() === hoje.getMonth();
+  });
+  
+  if (aniversariantesHoje.length > 0) {
+    criarConfete();
+    aniversariantesHoje.forEach(f => {
+      mostrarNotificacao(`🎂🎉 Hoje é aniversário de ${f.nome}! Parabéns! 🎉🎂`, 'success', 10000);
+    });
+  }
+}
+
 // =============== SALVAR ===============
 async function salvar(e) {
   e.preventDefault();
@@ -1660,7 +2112,7 @@ async function salvar(e) {
       body: JSON.stringify(dados)
     });
     
-    mostrarNotificacao(editId ? 'Familiar atualizado com sucesso!' : 'Familiar cadastrado com sucesso!', 'success');
+    mostrarNotificacao(editId ? 'Familiar atualizado!' : 'Familiar cadastrado!', 'success');
     
     document.getElementById('familyForm').reset();
     document.getElementById('editId').value = '';
@@ -1672,17 +2124,18 @@ async function salvar(e) {
       await carregar();
       await carregarEstatisticas();
       await carregarAniversarioMaisProximo();
+      criarGraficoAniversarios();
       overlay.classList.remove('show');
     }, 1500);
     
   } catch (erro) {
     overlay.classList.remove('show');
     mostrarNotificacao('Solicitação enviada! Aguarde sincronização.', 'info');
-    
     setTimeout(async () => {
       await carregar();
       await carregarEstatisticas();
       await carregarAniversarioMaisProximo();
+      criarGraficoAniversarios();
     }, 2000);
   }
 }
@@ -1690,114 +2143,80 @@ async function salvar(e) {
 // =============== TABELA ===============
 function carregarTabela() {
   const tbody = document.getElementById('tableBody');
-  const loading = document.getElementById('loadingTable');
+  if (!tbody) return;
   
-  loading.classList.add('show');
   tbody.innerHTML = '';
   
-  setTimeout(() => {
-    loading.classList.remove('show');
+  if (familiares.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;">Nenhum familiar cadastrado</td></tr>';
+    return;
+  }
+  
+  familiares.forEach(f => {
+    const tr = document.createElement('tr');
     
-    if (familiares.length === 0) {
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="12" style="text-align: center; padding: 40px; color: var(--gray);">
-            Nenhum familiar cadastrado
-          </td>
-        </tr>
-      `;
-      return;
-    }
+    const dias = diasAteAniversario(f.nascimento);
+    const badge = dias !== null && dias <= 30 ? `<span class="badge-dias">🎂 ${dias}d</span>` : '';
     
-    familiares.forEach(f => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${f.id}</td>
-        <td><strong>${f.nome}</strong></td>
-        <td>${f.parentesco}</td>
-        <td>${f.cpf || '-'}</td>
-        <td>${formatarData(f.nascimento) || '-'}</td>
-        <td>${f.idade || '-'}</td>
-        <td>${f.telefone || '-'}</td>
-        <td>${f.email || '-'}</td>
-        <td>${f.profissao || '-'}</td>
-        <td>${f.estadoCivil || '-'}</td>
-        <td>${f.escolaridade || '-'}</td>
-        <td>
-          <div style="display: flex; gap: 5px;">
-            <button class="btn btn-success btn-sm" onclick="editar(${f.id})" title="Editar">✏️</button>
-            <button class="btn btn-danger btn-sm" onclick="deletar(${f.id})" title="Excluir">🗑️</button>
-          </div>
-        </td>
-      `;
-      tbody.appendChild(tr);
-    });
-  }, 500);
+    tr.innerHTML = `
+      <td><strong>${f.nome}${badge}</strong></td>
+      <td>${f.parentesco}</td>
+      <td>${formatarData(f.nascimento) || '-'}</td>
+      <td>${f.idade || '-'}</td>
+      <td>${f.telefone || '-'}</td>
+      <td>
+        <button class="btn btn-success btn-sm" onclick="editar(${f.id})">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deletar(${f.id})">🗑️</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
 }
 
 // =============== CARDS ===============
 function carregarCards() {
   const grid = document.getElementById('cardsGrid');
-  const loading = document.getElementById('loadingCards');
+  if (!grid) return;
   
-  loading.classList.add('show');
   grid.innerHTML = '';
   
-  setTimeout(() => {
-    loading.classList.remove('show');
+  if (familiares.length === 0) {
+    grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 60px;"><h3>Nenhum familiar cadastrado</h3></div>';
+    return;
+  }
+  
+  familiares.forEach(f => {
+    const card = document.createElement('div');
+    card.className = 'family-card';
+    card.onclick = () => visualizar(f.id);
     
-    if (familiares.length === 0) {
-      grid.innerHTML = `
-        <div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--gray);">
-          <h3>Nenhum familiar cadastrado</h3>
-          <p>Vá para a aba Cadastro para adicionar familiares</p>
-        </div>
-      `;
-      return;
-    }
+    const iniciais = f.nome.split(' ').map(n => n[0]).join('').substring(0, 2);
     
-    familiares.forEach(f => {
-      const card = document.createElement('div');
-      card.className = 'family-card';
-      card.onclick = () => visualizar(f.id);
-      
-      const iniciais = f.nome.split(' ').map(n => n[0]).join('').substring(0, 2);
-      
-      card.innerHTML = `
-        <div class="card-avatar">${iniciais}</div>
-        <div class="card-name">${f.nome}</div>
-        <div class="card-info">📱 ${f.telefone || 'Não informado'}</div>
-        <div class="card-info">📅 ${formatarData(f.nascimento) || 'Não informado'}</div>
-        <div class="card-info">🎂 ${f.idade ? f.idade + ' anos' : 'Idade não informada'}</div>
-        <span class="card-badge">${f.parentesco}</span>
-      `;
-      
-      grid.appendChild(card);
-    });
-  }, 500);
+    card.innerHTML = `
+      <div class="card-avatar">${iniciais}</div>
+      <div class="card-name">${f.nome}</div>
+      <div class="card-info">📱 ${f.telefone || 'Não informado'}</div>
+      <div class="card-info">🎂 ${f.idade ? f.idade + ' anos' : 'N/A'}</div>
+      <span class="card-badge">${f.parentesco}</span>
+    `;
+    
+    grid.appendChild(card);
+  });
 }
 
 // =============== ANIVERSÁRIOS ===============
 async function carregarAniversarios() {
   const lista = document.getElementById('aniversariosList');
-  const loading = document.getElementById('loadingAniversarios');
+  if (!lista) return;
   
-  loading.classList.add('show');
   lista.innerHTML = '';
   
   try {
     const res = await fetch(API_URL + '?acao=aniversarios');
     const aniversarios = await res.json();
     
-    loading.classList.remove('show');
-    
     if (aniversarios.length === 0) {
-      lista.innerHTML = `
-        <div style="text-align: center; padding: 40px; color: var(--gray);">
-          <h3>🎉 Nenhum aniversário próximo</h3>
-          <p>Não há aniversariantes nos próximos dias</p>
-        </div>
-      `;
+      lista.innerHTML = '<div style="text-align: center; padding: 40px;"><h3>🎉 Nenhum aniversário próximo</h3></div>';
       return;
     }
     
@@ -1809,10 +2228,7 @@ async function carregarAniversarios() {
         <div class="aniversario-icon">🎂</div>
         <div class="aniversario-info">
           <div class="aniversario-nome">${a.nome} (${a.parentesco})</div>
-          <div class="aniversario-dias">
-            Faz aniversário em ${a.diasRestantes} ${a.diasRestantes === 1 ? 'dia' : 'dias'} 
-            - Fará ${a.idadeQueFara} anos
-          </div>
+          <div class="aniversario-dias">Faz aniversário em ${a.diasRestantes} ${a.diasRestantes === 1 ? 'dia' : 'dias'} - Fará ${a.idadeQueFara} anos</div>
         </div>
       `;
       
@@ -1820,12 +2236,7 @@ async function carregarAniversarios() {
     });
     
   } catch (erro) {
-    loading.classList.remove('show');
-    lista.innerHTML = `
-      <div style="text-align: center; padding: 40px; color: var(--gray);">
-        <p>Erro ao carregar aniversários</p>
-      </div>
-    `;
+    lista.innerHTML = '<div style="text-align: center; padding: 40px;"><p>Erro ao carregar</p></div>';
   }
 }
 
@@ -1858,10 +2269,6 @@ function visualizar(id) {
       <div class="info-value">${familiar.idade ? familiar.idade + ' anos' : 'N/A'}</div>
     </div>
     <div class="info-item">
-      <div class="info-label">Cartão SUS</div>
-      <div class="info-value">${familiar.cartaoSus || 'Não informado'}</div>
-    </div>
-    <div class="info-item">
       <div class="info-label">Telefone</div>
       <div class="info-value">${familiar.telefone || 'Não informado'}</div>
     </div>
@@ -1869,36 +2276,10 @@ function visualizar(id) {
       <div class="info-label">Email</div>
       <div class="info-value">${familiar.email || 'Não informado'}</div>
     </div>
-    <div class="info-item">
-      <div class="info-label">Profissão</div>
-      <div class="info-value">${familiar.profissao || 'Não informado'}</div>
-    </div>
-    <div class="info-item">
-      <div class="info-label">Estado Civil</div>
-      <div class="info-value">${familiar.estadoCivil || 'Não informado'}</div>
-    </div>
-    <div class="info-item">
-      <div class="info-label">Escolaridade</div>
-      <div class="info-value">${familiar.escolaridade || 'Não informado'}</div>
-    </div>
-    <div class="info-item">
-      <div class="info-label">Tipo Sanguíneo</div>
-      <div class="info-value">${familiar.tipoSanguineo || 'Não informado'}</div>
-    </div>
-    <div class="info-item">
-      <div class="info-label">Nacionalidade</div>
-      <div class="info-value">${familiar.nacionalidade || 'Não informado'}</div>
-    </div>
     <div class="info-item" style="grid-column: 1/-1;">
       <div class="info-label">Endereço</div>
       <div class="info-value">${familiar.endereco || 'Não informado'}</div>
     </div>
-    ${familiar.observacoes ? `
-    <div class="info-item" style="grid-column: 1/-1;">
-      <div class="info-label">Observações</div>
-      <div class="info-value">${familiar.observacoes}</div>
-    </div>
-    ` : ''}
   `;
   
   modal.classList.add('active');
@@ -1949,7 +2330,6 @@ function editar(id) {
   document.getElementById('btnCancelar').style.display = 'block';
   
   mudarAba('cadastro');
-  document.querySelector('.nav-tab').click();
 }
 
 function cancelarEdicao() {
@@ -1962,9 +2342,7 @@ function cancelarEdicao() {
 
 // =============== DELETAR ===============
 async function deletar(id) {
-  if (!confirm('Tem certeza que deseja excluir este familiar?')) return;
-  
-  mostrarNotificacao('Excluindo...', 'info');
+  if (!confirm('Tem certeza que deseja excluir?')) return;
   
   try {
     await fetch(API_URL, {
@@ -1974,33 +2352,29 @@ async function deletar(id) {
       body: JSON.stringify({ acao: 'deletar', id: id })
     });
     
-    mostrarNotificacao('Familiar excluído com sucesso!', 'success');
+    mostrarNotificacao('Familiar excluído!', 'success');
     
     setTimeout(async () => {
       await carregar();
       await carregarEstatisticas();
       await carregarAniversarioMaisProximo();
+      criarGraficoAniversarios();
       carregarTabela();
     }, 1000);
     
   } catch (erro) {
-    mostrarNotificacao('Solicitação enviada! Aguarde sincronização.', 'info');
-    setTimeout(async () => {
-      await carregar();
-      await carregarEstatisticas();
-      await carregarAniversarioMaisProximo();
-      carregarTabela();
-    }, 2000);
+    mostrarNotificacao('Solicitação enviada!', 'info');
   }
 }
 
 // =============== SINCRONIZAR ===============
 async function sincronizarDados() {
-  mostrarNotificacao('Sincronizando dados...', 'info');
+  mostrarNotificacao('Sincronizando...', 'info');
   
   await carregar();
   await carregarEstatisticas();
   await carregarAniversarioMaisProximo();
+  criarGraficoAniversarios();
   carregarTabela();
   
   mostrarNotificacao('Dados sincronizados!', 'success');
@@ -2019,13 +2393,7 @@ function aplicarFiltros() {
     
     if (colunas.length < 2) return;
     
-    if (parentesco && !colunas[2].textContent.includes(parentesco)) {
-      mostrar = false;
-    }
-    
-    if (estadoCivil && !colunas[9].textContent.includes(estadoCivil)) {
-      mostrar = false;
-    }
+    if (parentesco && !colunas[1].textContent.includes(parentesco)) mostrar = false;
     
     linha.style.display = mostrar ? '' : 'none';
   });
@@ -2042,7 +2410,7 @@ function limparFiltros() {
 }
 
 // =============== PESQUISA ===============
-document.getElementById('searchInput').addEventListener('input', function(e) {
+document.getElementById('searchInput')?.addEventListener('input', function(e) {
   const termo = e.target.value.toLowerCase();
   const linhas = document.querySelectorAll('#tableBody tr');
   
@@ -2052,12 +2420,12 @@ document.getElementById('searchInput').addEventListener('input', function(e) {
   });
 });
 
-// =============== EXPORTAR EXCEL ===============
+// =============== EXPORTAR ===============
 function exportarExcel() {
-  let csv = 'Nome,Parentesco,CPF,Nascimento,Idade,Telefone,Email,Profissão,Estado Civil\n';
+  let csv = 'Nome,Parentesco,CPF,Nascimento,Idade,Telefone,Email\n';
   
   familiares.forEach(f => {
-    csv += `"${f.nome}","${f.parentesco}","${f.cpf || ''}","${formatarData(f.nascimento)}","${f.idade || ''}","${f.telefone || ''}","${f.email || ''}","${f.profissao || ''}","${f.estadoCivil || ''}"\n`;
+    csv += `"${f.nome}","${f.parentesco}","${f.cpf || ''}","${formatarData(f.nascimento)}","${f.idade || ''}","${f.telefone || ''}","${f.email || ''}"\n`;
   });
   
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -2066,33 +2434,7 @@ function exportarExcel() {
   link.download = 'familias_' + new Date().getTime() + '.csv';
   link.click();
   
-  mostrarNotificacao('Excel exportado com sucesso!', 'success');
-}
-
-function imprimirLista() {
-  window.print();
-}
-
-// =============== VERIFICAR ANIVERSÁRIOS DO DIA ===============
-function verificarAniversariosHoje() {
-  const hoje = new Date();
-  
-  const aniversariantesHoje = familiares.filter(f => {
-    if (!f.nascimento) return false;
-    const nasc = new Date(f.nascimento + 'T00:00:00');
-    return nasc.getDate() === hoje.getDate() && 
-           nasc.getMonth() === hoje.getMonth();
-  });
-  
-  if (aniversariantesHoje.length > 0) {
-    aniversariantesHoje.forEach(f => {
-      mostrarNotificacao(
-        `🎂🎉 Hoje é aniversário de ${f.nome}! Parabéns! 🎉🎂`,
-        'success',
-        10000
-      );
-    });
-  }
+  mostrarNotificacao('Excel exportado!', 'success');
 }
 
 // =============== UTILIDADES ===============
@@ -2104,20 +2446,23 @@ function formatarData(data) {
 
 // =============== INICIALIZAR ===============
 async function inicializar() {
+  if (!verificarAutenticacao()) return;
+  
   await carregar();
   await carregarEstatisticas();
   await carregarAniversarioMaisProximo();
+  criarGraficoAniversarios();
   carregarTabela();
+  carregarLembretes();
   
   setTimeout(verificarAniversariosHoje, 4000);
+  setTimeout(verificarLembretes, 5000);
 }
 
-// Auto-iniciar após animação
 setTimeout(() => {
   inicializar();
 }, 3500);
 
-// Atualizar contagem a cada minuto
 setInterval(() => {
   if (document.getElementById('birthdayCard').classList.contains('show')) {
     carregarAniversarioMaisProximo();
